@@ -1,66 +1,65 @@
-﻿# урсовая работа: еализация библиотеки RxJava
+﻿# Курсовая работа: Реализация библиотеки RxJava
 
-**ыполнил:** [аше имя]
-**руппа:** [аша группа]
-**ата:** арт 2026
+**Выполнил:** [Самохвалов И.И.]
+**Дата:** Март 2026
 
 ## Содержание
-1. [ведение](#введение)
-2. [рхитектура системы](#архитектура-системы)
-3. [еализация базовых компонентов](#реализация-базовых-компонентов)
+1. [Введение](#введение)
+2. [Архитектура системы](#архитектура-системы)
+3. [Реализация базовых компонентов](#реализация-базовых-компонентов)
 4. [Система планировщиков (Schedulers)](#система-планировщиков-schedulers)
-5. [ператоры преобразования](#операторы-преобразования)
-6. [правление подписками](#управление-подписками)
-7. [бработка ошибок](#обработка-ошибок)
+5. [Операторы преобразования](#операторы-преобразования)
+6. [Управление подписками](#управление-подписками)
+7. [Обработка ошибок](#обработка-ошибок)
 8. [Тестирование](#тестирование)
-9. [римеры использования](#примеры-использования)
-10. [аключение](#заключение)
+9. [Примеры использования](#примеры-использования)
+10. [Заключение](#заключение)
 11. [Список литературы](#список-литературы)
 
 ---
 
-## ведение
+## Введение
 
-### ктуальность темы
-еактивное программирование стало неотъемлемой частью современной разработки, особенно в асинхронных и событийно-ориентированных системах. иблиотека RxJava является одним из самых популярных инструментов для реализации реактивных потоков в экосистеме Java.
+### Актуальность темы
+Реактивное программирование стало неотъемлемой частью современной разработки, особенно в асинхронных и событийно-ориентированных системах. Библиотека RxJava является одним из самых популярных инструментов для реализации реактивных потоков в экосистеме Java.
 
-### ель работы
-азработать собственную реализацию базовых компонентов RxJava, демонстрирующую понимание принципов реактивного программирования, многопоточности и паттерна "аблюдатель".
+### Цель работы
+Разработать собственную реализацию базовых компонентов RxJava, демонстрирующую понимание принципов реактивного программирования, многопоточности и паттерна "Наблюдатель".
 
-### адачи
-1. еализовать базовые компоненты (Observable, Observer, Disposable)
+### Задачи
+1. Реализовать базовые компоненты (Observable, Observer, Disposable)
 2. Создать систему планировщиков для управления потоками
-3. еализовать основные операторы преобразования (map, filter, flatMap)
-4. беспечить корректную обработку ошибок
-5. азработать систему тестирования
-6. одготовить демонстрационные примеры
+3. Реализовать основные операторы преобразования (map, filter, flatMap)
+4. Обеспечить корректную обработку ошибок
+5. Разработать систему тестирования
+6. Подготовить демонстрационные примеры
 
 ---
 
-## рхитектура системы
+## Архитектура системы
 
-### бщая структура проекта
+### Общая структура проекта
 src/main/java/rx/
-├── core/ # азовые компоненты
-│ ├── Observable.java # сточник данных
-│ ├── Observer.java # аблюдатель
-│ ├── Disposable.java # правление подпиской
-│ └── Emitter.java # миттер для создания Observable
-├── schedulers/ # ланировщики потоков
-│ ├── Scheduler.java # нтерфейс планировщика
-│ ├── IOScheduler.java # ля I/O операций
-│ ├── ComputationScheduler.java # ля вычислений
-│ └── SingleThreadScheduler.java # ля последовательных операций
-├── operators/ # ператоры преобразования
-│ ├── MapObservable.java # ператор map
-│ ├── FilterObservable.java # ператор filter
-│ └── FlatMapObservable.java # ператор flatMap
-└── subscription/ # правление подписками
-└── CompositeDisposable.java # рупповое управление
+├── core/ # Базовые компоненты
+│ ├── Observable.java # Источник данных
+│ ├── Observer.java # Наблюдатель
+│ ├── Disposable.java # Управление подпиской
+│ └── Emitter.java # Эмиттер для создания Observable
+├── schedulers/ # Планировщики потоков
+│ ├── Scheduler.java # Интерфейс планировщика
+│ ├── IOScheduler.java # Для I/O операций
+│ ├── ComputationScheduler.java # Для вычислений
+│ └── SingleThreadScheduler.java # Для последовательных операций
+├── operators/ # Операторы преобразования
+│ ├── MapObservable.java # Оператор map
+│ ├── FilterObservable.java # Оператор filter
+│ └── FlatMapObservable.java # Оператор flatMap
+└── subscription/ # Управление подписками
+└── CompositeDisposable.java # Групповое управление
 
 text
 
-### иаграмма классов
+### Диаграмма классов
 ┌────────────────┐ ┌────────────────┐
 │ Observable │◄─────│ Observer │
 │ (abstract) │ │ (interface) │
@@ -97,17 +96,17 @@ text
 
 ---
 
-## еализация базовых компонентов
+## Реализация базовых компонентов
 
-### 1. нтерфейс Observer
+### 1. Интерфейс Observer
 
-`java
+```java
 public interface Observer<T> {
-    void onNext(T item);        // олучение следующего элемента
-    void onError(Throwable t);   // бработка ошибки
-    void onComplete();           // авершение потока
+    void onNext(T item);        // Получение следующего элемента
+    void onError(Throwable t);   // Обработка ошибки
+    void onComplete();           // Завершение потока
 }
-ринцип работы:
+Принцип работы:
 
 onNext() - вызывается при поступлении нового элемента
 
@@ -115,7 +114,7 @@ onError() - уведомляет об ошибке в потоке
 
 onComplete() - сигнализирует о завершении потока
 
-2. ласс Observable
+2. Класс Observable
 java
 public abstract class Observable<T> {
     // Создание Observable через эмиттер
@@ -151,32 +150,32 @@ public abstract class Observable<T> {
         };
     }
     
-    // абричные методы
+    // Фабричные методы
     public static <T> Observable<T> just(T... items) { ... }
     public static Observable<Integer> range(int start, int count) { ... }
     
-    // одписка
+    // Подписка
     public abstract void subscribeActual(Observer<? super T> observer);
     public Disposable subscribe(Observer<? super T> observer) { ... }
 }
-лючевые особенности:
+Ключевые особенности:
 
-енивые вычисления (цепочка не выполняется до подписки)
+Ленивые вычисления (цепочка не выполняется до подписки)
 
-оддержка отмены подписки через disposed flag
+Поддержка отмены подписки через disposed flag
 
-бработка ошибок на уровне эмиттера
+Обработка ошибок на уровне эмиттера
 
 Система планировщиков (Schedulers)
-нтерфейс Scheduler
+Интерфейс Scheduler
 java
 public interface Scheduler {
-    void execute(Runnable task);        // ыполнение задачи
+    void execute(Runnable task);        // Выполнение задачи
     Worker createWorker();                // Создание воркера
     
     interface Worker {
-        void schedule(Runnable task);    // ланирование задачи
-        void dispose();                   // тмена
+        void schedule(Runnable task);    // Планирование задачи
+        void dispose();                   // Отмена
     }
 }
 1. IOScheduler (CachedThreadPool)
@@ -202,11 +201,11 @@ public class IOScheduler implements Scheduler {
 }
 Характеристики:
 
-ул потоков с автоматическим расширением
+Пул потоков с автоматическим расширением
 
-отоки демоны (не блокируют завершение JVM)
+Потоки демоны (не блокируют завершение JVM)
 
-деально для IO-bound операций (сеть, файлы, )
+Идеально для IO-bound операций (сеть, файлы, БД)
 
 2. ComputationScheduler (FixedThreadPool)
 java
@@ -232,11 +231,11 @@ public class ComputationScheduler implements Scheduler {
 }
 Характеристики:
 
-иксированное количество потоков = количество ядер CPU
+Фиксированное количество потоков = количество ядер CPU
 
-редотвращает излишнее переключение контекста
+Предотвращает излишнее переключение контекста
 
-деально для CPU-bound операций
+Идеально для CPU-bound операций
 
 3. SingleThreadScheduler (SingleThreadExecutor)
 java
@@ -261,13 +260,13 @@ public class SingleThreadScheduler implements Scheduler {
 }
 Характеристики:
 
-арантирует последовательное выполнение
+Гарантирует последовательное выполнение
 
-сключает состояние гонки
+Исключает состояние гонки
 
-деально для операций, требующих атомарности
+Идеально для операций, требующих атомарности
 
-етоды управления потоками
+Методы управления потоками
 java
 // subscribeOn - задает поток для выполнения цепочки
 public Observable<T> subscribeOn(Scheduler scheduler) {
@@ -306,14 +305,14 @@ public Observable<T> observeOn(Scheduler scheduler) {
     };
 }
 Сравнение планировщиков
-ХарактеристикаIOSchedulerComputationSchedulerSingleThreadScheduler
-Тип пулаCachedThreadPoolFixedThreadPoolSingleThreadExecutor
-оличество потоковинамическое= CPU cores1
-азначениеI/O операцииычисленияоследовательные задачи
-оведениеСоздает потоки по мере необходимостиереиспользует фиксированное число потоковарантирует порядок
-римерапросы к , чтение файловатематические расчетыбновление UI
-ператоры преобразования
-1. ператор Map
+Характеристика	IOScheduler	ComputationScheduler	SingleThreadScheduler
+Тип пула	CachedThreadPool	FixedThreadPool	SingleThreadExecutor
+Количество потоков	Динамическое	= CPU cores	1
+Назначение	I/O операции	Вычисления	Последовательные задачи
+Поведение	Создает потоки по мере необходимости	Переиспользует фиксированное число потоков	Гарантирует порядок
+Пример	Запросы к БД, чтение файлов	Математические расчеты	Обновление UI
+Операторы преобразования
+1. Оператор Map
 java
 public class MapObservable<T, R> extends Observable<R> {
     private final Observable<T> source;
@@ -334,9 +333,9 @@ public class MapObservable<T, R> extends Observable<R> {
         });
     }
 }
-ринцип работы: Трансформирует каждый элемент потока с помощью заданной функции.
+Принцип работы: Трансформирует каждый элемент потока с помощью заданной функции.
 
-2. ператор Filter
+2. Оператор Filter
 java
 public class FilterObservable<T> extends Observable<T> {
     private final Observable<T> source;
@@ -359,9 +358,9 @@ public class FilterObservable<T> extends Observable<T> {
         });
     }
 }
-ринцип работы: ропускает только те элементы, которые удовлетворяют условию.
+Принцип работы: Пропускает только те элементы, которые удовлетворяют условию.
 
-3. ператор FlatMap
+3. Оператор FlatMap
 java
 public class FlatMapObservable<T, R> extends Observable<R> {
     private final Observable<T> source;
@@ -414,20 +413,20 @@ public class FlatMapObservable<T, R> extends Observable<R> {
         disposables.add(source.subscribe(mainObserver));
     }
 }
-ринцип работы:
+Принцип работы:
 
-аждый элемент преобразуется в новый Observable
+Каждый элемент преобразуется в новый Observable
 
-се полученные Observable "уплощаются" в один поток
+Все полученные Observable "уплощаются" в один поток
 
-авершение происходит только когда завершены все внутренние Observable
+Завершение происходит только когда завершены все внутренние Observable
 
-правление подписками
-нтерфейс Disposable
+Управление подписками
+Интерфейс Disposable
 java
 public interface Disposable {
-    void dispose();        // тмена подписки
-    boolean isDisposed();   // роверка статуса
+    void dispose();        // Отмена подписки
+    boolean isDisposed();   // Проверка статуса
 }
 CompositeDisposable
 java
@@ -450,36 +449,36 @@ public class CompositeDisposable implements Disposable {
         disposables.clear();
     }
 }
-реимущества:
+Преимущества:
 
-рупповое управление подписками
+Групповое управление подписками
 
 Thread-safe реализация
 
-втоматическая очистка при dispose
+Автоматическая очистка при dispose
 
-бработка ошибок
+Обработка ошибок
 Стратегии обработки ошибок
-ередача ошибки подписчику
+Передача ошибки подписчику
 
 java
 try {
-    // перация
+    // Операция
 } catch (Exception e) {
     observer.onError(e);
 }
-осстановление после ошибки
+Восстановление после ошибки
 
 java
 Observable.create(emitter -> {
     try {
-        // искованный код
+        // Рискованный код
     } catch (Exception e) {
         emitter.onNext(defaultValue);
         emitter.onComplete();
     }
 })
-огирование и проброс
+Логирование и проброс
 
 java
 .subscribe(
@@ -490,7 +489,7 @@ java
     }
 )
 Тестирование
-абор тестов
+Набор тестов
 java
 @Test
 public void testMapOperator() {
@@ -523,21 +522,21 @@ public void testSubscribeOn() throws InterruptedException {
     latch.await(1, TimeUnit.SECONDS);
     assertTrue(threadName.get().startsWith("rx-io"));
 }
-езультаты тестирования
-ТестСтатусписание
-Observable creation✅ PASSEDСоздание и подписка
-Map operator✅ PASSEDреобразование элементов
-Filter operator✅ PASSEDильтрация элементов
-FlatMap operator✅ PASSEDплощение потоков
-Operator chain✅ PASSEDепочка операторов
-SubscribeOn✅ PASSEDереключение потока подписки
-ObserveOn✅ PASSEDереключение потока наблюдения
-Error handling✅ PASSEDбработка ошибок
-CompositeDisposable✅ PASSEDрупповое управление
-окрытие: 100% основных сценариев
+Результаты тестирования
+Тест	Статус	Описание
+Observable creation	✅ PASSED	Создание и подписка
+Map operator	✅ PASSED	Преобразование элементов
+Filter operator	✅ PASSED	Фильтрация элементов
+FlatMap operator	✅ PASSED	Уплощение потоков
+Operator chain	✅ PASSED	Цепочка операторов
+SubscribeOn	✅ PASSED	Переключение потока подписки
+ObserveOn	✅ PASSED	Переключение потока наблюдения
+Error handling	✅ PASSED	Обработка ошибок
+CompositeDisposable	✅ PASSED	Групповое управление
+Покрытие: 100% основных сценариев
 
-римеры использования
-ример 1: ростая обработка данных
+Примеры использования
+Пример 1: Простая обработка данных
 java
 Observable.just("user1", "user2", "user3", "user4", "user5")
     .map(String::toUpperCase)
@@ -553,11 +552,11 @@ Observable.just("user1", "user2", "user3", "user4", "user5")
 // Processed: USER2
 // Processed: USER3
 // Processing complete
-ример 2: араллельная загрузка данных
+Пример 2: Параллельная загрузка данных
 java
 Observable.range(1, 5)
     .flatMap(id -> Observable.create(emitter -> {
-        // митация загрузки по сети
+        // Имитация загрузки по сети
         System.out.println("Loading user " + id + " in " + 
             Thread.currentThread().getName());
         Thread.sleep(100);
@@ -570,19 +569,19 @@ Observable.range(1, 5)
         error -> System.err.println("Error: " + error),
         () -> System.out.println("All users loaded")
     );
-ример 3: Сложная цепочка обработки
+Пример 3: Сложная цепочка обработки
 java
 Observable.range(1, 20)
-    .filter(x -> x % 2 == 0)                    // етные числа
-    .map(x -> x * x)                             // вадраты
-    .flatMap(x -> Observable.just(x, x * 2))     // аздвоение
-    .filter(x -> x > 50)                         // ольше 50
+    .filter(x -> x % 2 == 0)                    // Четные числа
+    .map(x -> x * x)                             // Квадраты
+    .flatMap(x -> Observable.just(x, x * 2))     // Раздвоение
+    .filter(x -> x > 50)                         // Больше 50
     .subscribe(
         item -> System.out.println("Result: " + item),
         Throwable::printStackTrace,
         () -> System.out.println("Done!")
     );
-ример 4: еальный сценарий - поиск товаров
+Пример 4: Реальный сценарий - поиск товаров
 java
 public class ProductSearchService {
     private final ProductRepository repository;
@@ -599,10 +598,10 @@ public class ProductSearchService {
                 emitter.onError(e);
             }
         })
-        .subscribeOn(new IOScheduler())           // оиск в IO потоке
-        .map(this::enrichWithDetails)             // богащение данными
+        .subscribeOn(new IOScheduler())           // Поиск в IO потоке
+        .map(this::enrichWithDetails)             // Обогащение данными
         .filter(Product::isAvailable)              // Только доступные
-        .observeOn(new SingleThreadScheduler());   // езультаты в UI поток
+        .observeOn(new SingleThreadScheduler());   // Результаты в UI поток
     }
     
     private Product enrichWithDetails(Product p) {
@@ -611,13 +610,13 @@ public class ProductSearchService {
         return p;
     }
 }
-аключение
-остигнутые результаты
- ходе выполнения курсовой работы были достигнуты следующие результаты:
+Заключение
+Достигнутые результаты
+В ходе выполнения курсовой работы были достигнуты следующие результаты:
 
-азработана архитектура реактивной библиотеки, включающая все ключевые компоненты RxJava
+Разработана архитектура реактивной библиотеки, включающая все ключевые компоненты RxJava
 
-еализованы базовые компоненты:
+Реализованы базовые компоненты:
 
 Observable с поддержкой ленивых вычислений
 
@@ -633,9 +632,9 @@ ComputationScheduler для вычислений
 
 SingleThreadScheduler для последовательных задач
 
-етоды subscribeOn/observeOn для управления потоками
+Методы subscribeOn/observeOn для управления потоками
 
-еализованы основные операторы:
+Реализованы основные операторы:
 
 Map для преобразования элементов
 
@@ -643,23 +642,23 @@ Filter для фильтрации
 
 FlatMap для создания вложенных потоков
 
-беспечена обработка ошибок на всех уровнях
+Обеспечена обработка ошибок на всех уровнях
 
-азработана система тестирования с покрытием основных сценариев
+Разработана система тестирования с покрытием основных сценариев
 
-реимущества реализации
-✅ истая архитектура - четкое разделение ответственности
+Преимущества реализации
+✅ Чистая архитектура - четкое разделение ответственности
 
-✅ роизводительность - эффективное использование пулов потоков
+✅ Производительность - эффективное использование пулов потоков
 
-✅ езопасность - thread-safe компоненты
+✅ Безопасность - thread-safe компоненты
 
-✅ асширяемость - легкое добавление новых операторов
+✅ Расширяемость - легкое добавление новых операторов
 
-✅ окументированность - подробные комментарии и примеры
+✅ Документированность - подробные комментарии и примеры
 
-озможные улучшения
-обавление операторов:
+Возможные улучшения
+Добавление операторов:
 
 reduce, scan для агрегации
 
@@ -667,15 +666,15 @@ zip, combineLatest для комбинирования
 
 retry, timeout для управления ошибками
 
-птимизация:
+Оптимизация:
 
 Backpressure поддержка
 
-олее эффективные алгоритмы для flatMap
+Более эффективные алгоритмы для flatMap
 
-эширование результатов
+Кэширование результатов
 
-ополнительные возможности:
+Дополнительные возможности:
 
 Hot/Cold Observable различие
 
@@ -683,8 +682,9 @@ ConnectableObservable
 
 Тестирование с TestScheduler
 
-ывод
-азработанная библиотека полностью соответствует требованиям задания и демонстрирует глубокое понимание принципов реактивного программирования, многопоточности и паттерна "аблюдатель". роект может служить основой для дальнейшего изучения и расширения функциональности RxJava.
+Вывод
+Разработанная библиотека полностью соответствует требованиям задания и демонстрирует глубокое понимание принципов реактивного программирования, многопоточности и паттерна "Наблюдатель". Проект может служить основой для дальнейшего изучения и расширения функциональности RxJava.
+
 Список литературы
 Official RxJava Documentation - https://github.com/ReactiveX/RxJava
 
@@ -695,5 +695,3 @@ Java Concurrency in Practice by Brian Goetz
 Reactive Streams Specification - https://www.reactive-streams.org/
 
 Oracle Java Documentation - https://docs.oracle.com/javase/
-
-ата выполнения: арт 2026
