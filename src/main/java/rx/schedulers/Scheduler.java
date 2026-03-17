@@ -1,4 +1,4 @@
-﻿package rx.schedulers;
+package rx.schedulers;
 
 public interface Scheduler {
     void execute(Runnable task);

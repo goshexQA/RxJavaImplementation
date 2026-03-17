@@ -1,4 +1,4 @@
-﻿package rx.operators;
+package rx.operators;
 
 import rx.core.Observable;
 import rx.core.Observer;

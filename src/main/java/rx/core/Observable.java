@@ -1,4 +1,4 @@
-﻿package rx.core;
+package rx.core;
 
 import rx.schedulers.Scheduler;
 import rx.operators.MapObservable;
@@ -52,6 +52,16 @@ public abstract class Observable<T> {
         return create(emitter -> {
             for (int i = start; i < start + count; i++) {
                 emitter.onNext(i);
+            }
+            emitter.onComplete();
+        });
+    }
+    
+    @SafeVarargs
+    public static <T> Observable<T> just(T... items) {
+        return create(emitter -> {
+            for (T item : items) {
+                emitter.onNext(item);
             }
             emitter.onComplete();
         });

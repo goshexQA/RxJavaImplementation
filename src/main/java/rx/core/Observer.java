@@ -1,4 +1,4 @@
-﻿package rx.core;
+package rx.core;
 
 public interface Observer<T> {
     void onNext(T item);

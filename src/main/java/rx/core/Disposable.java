@@ -1,4 +1,4 @@
-﻿package rx.core;
+package rx.core;
 
 public interface Disposable {
     void dispose();

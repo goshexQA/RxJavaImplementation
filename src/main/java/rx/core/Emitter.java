@@ -1,4 +1,4 @@
-﻿package rx.core;
+package rx.core;
 
 public interface Emitter<T> {
     void onNext(T item);

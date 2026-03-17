@@ -1,4 +1,4 @@
-﻿package rx.subscription;
+package rx.subscription;
 
 import rx.core.Disposable;
 import java.util.Set;
